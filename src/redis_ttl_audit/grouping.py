@@ -10,4 +10,3 @@ def group_key(key: str, depth: int) -> str:
         return key
 
     return ":".join(parts[:depth])
-

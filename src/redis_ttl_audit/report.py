@@ -199,4 +199,3 @@ def _suspicious_reason(group: str) -> str:
     if "token" in normalized:
         return "token-like key group has no TTL"
     return "temporary/cache-like key group has no TTL"
-

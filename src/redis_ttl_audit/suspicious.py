@@ -30,4 +30,3 @@ def is_suspicious_persistent_group(group: str) -> bool:
             return True
 
     return False
-

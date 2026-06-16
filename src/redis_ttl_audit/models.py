@@ -66,4 +66,3 @@ class AuditSummary:
         if group not in self.groups:
             self.groups[group] = GroupStats(group=group)
         return self.groups[group]
-

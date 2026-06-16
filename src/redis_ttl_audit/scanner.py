@@ -13,11 +13,9 @@ class RedisTtlClient(Protocol):
         cursor: int = 0,
         match: str | None = None,
         count: int | None = None,
-    ) -> tuple[int, Sequence[bytes]]:
-        ...
+    ) -> tuple[int, Sequence[bytes]]: ...
 
-    def ttl(self, name: bytes) -> int:
-        ...
+    def ttl(self, name: bytes) -> int: ...
 
 
 def scan_redis_ttl(
@@ -66,4 +64,3 @@ def scan_redis_ttl(
             break
 
     return summary
-

@@ -10,4 +10,3 @@ def format_seconds(value: int | float | None) -> str:
     if value is None:
         return "-"
     return f"{value:.0f}s"
-
