@@ -5,7 +5,9 @@
 From the repository root:
 
 ```bash
-pip install -e .[dev]
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+.venv/bin/python -c "import redis_ttl_audit; print(redis_ttl_audit.__version__)"
 docker compose up -d
 docker compose exec redis redis-cli FLUSHDB
 docker compose exec redis redis-cli SET cache:user:1 "Alice"
@@ -15,7 +17,7 @@ docker compose exec redis redis-cli SET config:feature:dark-mode "enabled"
 docker compose exec redis redis-cli SETEX session:web:abc 3600 "user-1"
 docker compose exec redis redis-cli SETEX rate-limit:api:user-1 60 "10"
 docker compose exec redis redis-cli SET temp:job:991 "running"
-redis-ttl-audit --url redis://localhost:6379/0 --output report.md
+.venv/bin/python -m redis_ttl_audit --url redis://localhost:6380/0 --output report.md
 ```
 
 Open `report.md`. The expected suspicious persistent groups are:
@@ -48,28 +50,50 @@ Cache-like, session-like, temporary, lock, queue, token, and rate-limit keys wit
 ## Installation
 
 ```bash
-pip install -e .
+python3 -m venv .venv
+.venv/bin/python -m pip install -e .
 ```
 
 For development:
 
 ```bash
-pip install -e .[dev]
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
 ```
+
+On Windows, create and activate the virtual environment with:
+
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+```
+
+Use the same virtual environment for installation and running the tool.
 
 ## Usage
 
 Run against the default local Redis database:
 
 ```bash
-redis-ttl-audit
+.venv/bin/python -m redis_ttl_audit
 ```
+
+The CLI default URL is `redis://localhost:6379/0`. The bundled Docker Compose file uses host port `6380` to avoid conflicts with an existing local Redis.
+
+If your Python scripts directory is on `PATH`, the installed console command is also available:
+
+```bash
+redis-ttl-audit --help
+```
+
+If that prints `command not found`, use `.venv/bin/python -m redis_ttl_audit` instead.
 
 Run with explicit options:
 
 ```bash
-redis-ttl-audit \
-  --url redis://localhost:6379/0 \
+.venv/bin/python -m redis_ttl_audit \
+  --url redis://localhost:6380/0 \
   --pattern "*" \
   --batch-size 1000 \
   --group-depth 2 \
@@ -80,7 +104,7 @@ redis-ttl-audit \
 Module execution is also supported:
 
 ```bash
-python -m redis_ttl_audit --help
+.venv/bin/python -m redis_ttl_audit --help
 ```
 
 ## Example Output
@@ -143,6 +167,8 @@ Start Redis:
 docker compose up -d
 ```
 
+The compose file maps Redis to host port `6380` to avoid conflicts with an existing local Redis on `6379`.
+
 Create sample keys:
 
 ```bash
@@ -158,7 +184,7 @@ redis-cli SET temp:job:991 "running"
 Run the audit:
 
 ```bash
-redis-ttl-audit --url redis://localhost:6379/0 --output report.md
+.venv/bin/python -m redis_ttl_audit --url redis://localhost:6380/0 --output report.md
 ```
 
 Expected result:
@@ -172,9 +198,48 @@ session:web and rate-limit:api are reported as expiring groups.
 ## Development
 
 ```bash
-python -m pytest
-python -m ruff check src tests
-python -m mypy src/redis_ttl_audit tests
+.venv/bin/python -m pytest
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/redis_ttl_audit tests
+```
+
+## Troubleshooting
+
+### `error: externally-managed-environment`
+
+Your Linux distribution blocks direct installs into system Python. Create a project virtual environment and install there:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+```
+
+If `venv` is missing on Debian or Ubuntu:
+
+```bash
+sudo apt install python3-venv
+```
+
+### `/usr/bin/python3: No module named redis_ttl_audit`
+
+Install the project into the virtual environment and run with that same interpreter:
+
+```bash
+.venv/bin/python -m pip install -e ".[dev]"
+.venv/bin/python -c "import redis_ttl_audit; print(redis_ttl_audit.__version__)"
+.venv/bin/python -m redis_ttl_audit --url redis://localhost:6380/0 --output report.md
+```
+
+If `python3 -m pip` is missing, install pip for your Python environment first. On Debian or Ubuntu:
+
+```bash
+sudo apt install python3-pip
+```
+
+For a no-install local development fallback, run with `PYTHONPATH=src` after installing dependencies in a virtual environment:
+
+```bash
+PYTHONPATH=src python3 -m redis_ttl_audit --url redis://localhost:6380/0 --output report.md
 ```
 
 ## License
