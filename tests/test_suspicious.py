@@ -23,4 +23,3 @@ def test_config_group_is_not_suspicious() -> None:
 
 def test_lookup_group_is_not_suspicious() -> None:
     assert is_suspicious_persistent_group("lookup:country") is False
-

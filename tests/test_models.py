@@ -31,4 +31,3 @@ def test_audit_summary_get_group_reuses_existing_group() -> None:
 
     assert first is second
     assert list(summary.groups) == ["cache:user"]
-

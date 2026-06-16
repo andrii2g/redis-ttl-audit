@@ -26,4 +26,3 @@ def test_group_key_empty_key() -> None:
 def test_group_key_invalid_depth() -> None:
     with pytest.raises(ValueError):
         group_key("cache:user:123", 0)
-

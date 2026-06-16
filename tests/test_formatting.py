@@ -19,4 +19,3 @@ def test_format_seconds_zero() -> None:
 
 def test_format_seconds_none() -> None:
     assert format_seconds(None) == "-"
-

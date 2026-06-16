@@ -64,4 +64,3 @@ def test_render_markdown_report_escapes_table_cells_and_code_spans() -> None:
 
     assert "cache\\|user" in report
     assert "`cache:user:\\`quoted\\``" in report
-

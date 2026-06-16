@@ -142,4 +142,3 @@ def test_scanner_rejects_invalid_numeric_arguments() -> None:
         scan_redis_ttl(redis, "*", 1000, 0, 0, "utf-8")
     with pytest.raises(ValueError, match="sample"):
         scan_redis_ttl(redis, "*", 1000, 2, -1, "utf-8")
-
