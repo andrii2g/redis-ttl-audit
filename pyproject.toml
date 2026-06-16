@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=69.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "redis-ttl-audit"
+version = "0.1.0"
+description = "Read-only Redis TTL auditor for finding keys that never expire"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "redis>=5.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.6.0",
+    "mypy>=1.10.0",
+]
+
+[project.scripts]
+redis-ttl-audit = "redis_ttl_audit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+mypy_path = "src"
+
